@@ -1,0 +1,323 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <edmx:Runtime>
+    <edmx:StorageModels>
+      <Schema Namespace="RestaurantDataModel.Store"
+              Provider="System.Data.SqlClient"
+              ProviderManifestToken="2012"
+              Alias="Self"
+              xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl"
+              xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator">
+        <EntityType Name="Clients">
+          <Key><PropertyRef Name="client_id" /></Key>
+          <Property Name="client_id" Type="tinyint" Nullable="false" />
+          <Property Name="full_name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="phone" Type="bigint" Nullable="false" />
+          <Property Name="email" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="birth_date" Type="date" Nullable="false" />
+          <Property Name="preferences" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Dishes">
+          <Key><PropertyRef Name="dish_id" /></Key>
+          <Property Name="dish_id" Type="tinyint" Nullable="false" />
+          <Property Name="dish_name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="description" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="price" Type="smallint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Orders">
+          <Key><PropertyRef Name="order_id" /></Key>
+          <Property Name="order_id" Type="tinyint" Nullable="false" />
+          <Property Name="client_id" Type="tinyint" Nullable="false" />
+          <Property Name="table_number" Type="tinyint" Nullable="false" />
+          <Property Name="created_at" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="status" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="payment_status" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="dish_id" Type="tinyint" />
+        </EntityType>
+        <EntityType Name="Reservations">
+          <Key><PropertyRef Name="reservation_id" /></Key>
+          <Property Name="reservation_id" Type="tinyint" Nullable="false" />
+          <Property Name="client_id" Type="tinyint" Nullable="false" />
+          <Property Name="table_number" Type="tinyint" Nullable="false" />
+          <Property Name="reserved_at" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="guest_count" Type="tinyint" Nullable="false" />
+          <Property Name="status" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="log">
+          <Key><PropertyRef Name="user_id" /></Key>
+          <Property Name="user_id" Type="tinyint" Nullable="false" />
+          <Property Name="client_id" Type="tinyint" Nullable="false" />
+          <Property Name="login" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="password_hash" Type="nvarchar" MaxLength="64" Nullable="false" />
+        </EntityType>
+
+        <Association Name="FK_log_Clients">
+          <End Role="Clients" Type="Self.Clients" Multiplicity="1" />
+          <End Role="log" Type="Self.log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clients"><PropertyRef Name="client_id" /></Principal>
+            <Dependent Role="log"><PropertyRef Name="client_id" /></Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Clients">
+          <End Role="Clients" Type="Self.Clients" Multiplicity="1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clients"><PropertyRef Name="client_id" /></Principal>
+            <Dependent Role="Orders"><PropertyRef Name="client_id" /></Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Dishes">
+          <End Role="Dishes" Type="Self.Dishes" Multiplicity="0..1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dishes"><PropertyRef Name="dish_id" /></Principal>
+            <Dependent Role="Orders"><PropertyRef Name="dish_id" /></Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Reservations_Clients">
+          <End Role="Clients" Type="Self.Clients" Multiplicity="1" />
+          <End Role="Reservations" Type="Self.Reservations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clients"><PropertyRef Name="client_id" /></Principal>
+            <Dependent Role="Reservations"><PropertyRef Name="client_id" /></Dependent>
+          </ReferentialConstraint>
+        </Association>
+
+        <EntityContainer Name="RestaurantDataModelStoreContainer">
+          <EntitySet Name="Clients" EntityType="Self.Clients" Schema="dbo" store:Type="Tables" Table="Clients" />
+          <EntitySet Name="Dishes" EntityType="Self.Dishes" Schema="dbo" store:Type="Tables" Table="Dishes" />
+          <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" Table="Orders" />
+          <EntitySet Name="Reservations" EntityType="Self.Reservations" Schema="dbo" store:Type="Tables" Table="Reservations" />
+          <EntitySet Name="log" EntityType="Self.log" Schema="dbo" store:Type="Tables" Table="log" />
+          <AssociationSet Name="FK_log_Clients" Association="Self.FK_log_Clients">
+            <End Role="Clients" EntitySet="Clients" />
+            <End Role="log" EntitySet="log" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Clients" Association="Self.FK_Orders_Clients">
+            <End Role="Clients" EntitySet="Clients" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Dishes" Association="Self.FK_Orders_Dishes">
+            <End Role="Dishes" EntitySet="Dishes" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Reservations_Clients" Association="Self.FK_Reservations_Clients">
+            <End Role="Clients" EntitySet="Clients" />
+            <End Role="Reservations" EntitySet="Reservations" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+
+    <edmx:ConceptualModels>
+      <Schema Namespace="RestaurantDataModel"
+              Alias="Self"
+              xmlns="http://schemas.microsoft.com/ado/2009/11/edm"
+              xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntityType Name="Client">
+          <Key><PropertyRef Name="ClientId" /></Key>
+          <Property Name="ClientId" Type="Byte" Nullable="false" />
+          <Property Name="FullName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Phone" Type="Int64" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BirthDate" Type="DateTime" Precision="0" Nullable="false" />
+          <Property Name="Preferences" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Orders" Relationship="Self.FK_Orders_Clients" FromRole="Client" ToRole="Orders" />
+          <NavigationProperty Name="Reservations" Relationship="Self.FK_Reservations_Clients" FromRole="Client" ToRole="Reservations" />
+          <NavigationProperty Name="UserLogs" Relationship="Self.FK_log_Clients" FromRole="Client" ToRole="UserLogs" />
+        </EntityType>
+        <EntityType Name="Dish">
+          <Key><PropertyRef Name="DishId" /></Key>
+          <Property Name="DishId" Type="Byte" Nullable="false" />
+          <Property Name="DishName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Price" Type="Int16" Nullable="false" />
+          <NavigationProperty Name="Orders" Relationship="Self.FK_Orders_Dishes" FromRole="Dish" ToRole="Orders" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key><PropertyRef Name="OrderId" /></Key>
+          <Property Name="OrderId" Type="Byte" Nullable="false" />
+          <Property Name="ClientId" Type="Byte" Nullable="false" />
+          <Property Name="TableNumber" Type="Byte" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="7" Nullable="false" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PaymentStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DishId" Type="Byte" />
+          <NavigationProperty Name="Client" Relationship="Self.FK_Orders_Clients" FromRole="Orders" ToRole="Client" />
+          <NavigationProperty Name="Dish" Relationship="Self.FK_Orders_Dishes" FromRole="Orders" ToRole="Dish" />
+        </EntityType>
+        <EntityType Name="Reservation">
+          <Key><PropertyRef Name="ReservationId" /></Key>
+          <Property Name="ReservationId" Type="Byte" Nullable="false" />
+          <Property Name="ClientId" Type="Byte" Nullable="false" />
+          <Property Name="TableNumber" Type="Byte" Nullable="false" />
+          <Property Name="ReservedAt" Type="DateTime" Precision="7" Nullable="false" />
+          <Property Name="GuestCount" Type="Byte" Nullable="false" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Client" Relationship="Self.FK_Reservations_Clients" FromRole="Reservations" ToRole="Client" />
+        </EntityType>
+        <EntityType Name="UserLog">
+          <Key><PropertyRef Name="UserId" /></Key>
+          <Property Name="UserId" Type="Byte" Nullable="false" />
+          <Property Name="ClientId" Type="Byte" Nullable="false" />
+          <Property Name="Login" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Client" Relationship="Self.FK_log_Clients" FromRole="UserLogs" ToRole="Client" />
+        </EntityType>
+
+        <Association Name="FK_log_Clients">
+          <End Role="Client" Type="Self.Client" Multiplicity="1" />
+          <End Role="UserLogs" Type="Self.UserLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client"><PropertyRef Name="ClientId" /></Principal>
+            <Dependent Role="UserLogs"><PropertyRef Name="ClientId" /></Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Clients">
+          <End Role="Client" Type="Self.Client" Multiplicity="1" />
+          <End Role="Orders" Type="Self.Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client"><PropertyRef Name="ClientId" /></Principal>
+            <Dependent Role="Orders"><PropertyRef Name="ClientId" /></Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Dishes">
+          <End Role="Dish" Type="Self.Dish" Multiplicity="0..1" />
+          <End Role="Orders" Type="Self.Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Dish"><PropertyRef Name="DishId" /></Principal>
+            <Dependent Role="Orders"><PropertyRef Name="DishId" /></Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Reservations_Clients">
+          <End Role="Client" Type="Self.Client" Multiplicity="1" />
+          <End Role="Reservations" Type="Self.Reservation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client"><PropertyRef Name="ClientId" /></Principal>
+            <Dependent Role="Reservations"><PropertyRef Name="ClientId" /></Dependent>
+          </ReferentialConstraint>
+        </Association>
+
+        <EntityContainer Name="RestaurantDataEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Clients" EntityType="Self.Client" />
+          <EntitySet Name="Dishes" EntityType="Self.Dish" />
+          <EntitySet Name="Orders" EntityType="Self.Order" />
+          <EntitySet Name="Reservations" EntityType="Self.Reservation" />
+          <EntitySet Name="UserLogs" EntityType="Self.UserLog" />
+          <AssociationSet Name="FK_log_Clients" Association="Self.FK_log_Clients">
+            <End Role="Client" EntitySet="Clients" />
+            <End Role="UserLogs" EntitySet="UserLogs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Clients" Association="Self.FK_Orders_Clients">
+            <End Role="Client" EntitySet="Clients" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Dishes" Association="Self.FK_Orders_Dishes">
+            <End Role="Dish" EntitySet="Dishes" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Reservations_Clients" Association="Self.FK_Reservations_Clients">
+            <End Role="Client" EntitySet="Clients" />
+            <End Role="Reservations" EntitySet="Reservations" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RestaurantDataModelStoreContainer"
+                                CdmEntityContainer="RestaurantDataEntities">
+          <EntitySetMapping Name="Clients">
+            <EntityTypeMapping TypeName="RestaurantDataModel.Client">
+              <MappingFragment StoreEntitySet="Clients">
+                <ScalarProperty Name="ClientId" ColumnName="client_id" />
+                <ScalarProperty Name="FullName" ColumnName="full_name" />
+                <ScalarProperty Name="Phone" ColumnName="phone" />
+                <ScalarProperty Name="Email" ColumnName="email" />
+                <ScalarProperty Name="BirthDate" ColumnName="birth_date" />
+                <ScalarProperty Name="Preferences" ColumnName="preferences" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Dishes">
+            <EntityTypeMapping TypeName="RestaurantDataModel.Dish">
+              <MappingFragment StoreEntitySet="Dishes">
+                <ScalarProperty Name="DishId" ColumnName="dish_id" />
+                <ScalarProperty Name="DishName" ColumnName="dish_name" />
+                <ScalarProperty Name="Description" ColumnName="description" />
+                <ScalarProperty Name="Price" ColumnName="price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="RestaurantDataModel.Order">
+              <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="OrderId" ColumnName="order_id" />
+                <ScalarProperty Name="ClientId" ColumnName="client_id" />
+                <ScalarProperty Name="TableNumber" ColumnName="table_number" />
+                <ScalarProperty Name="CreatedAt" ColumnName="created_at" />
+                <ScalarProperty Name="Status" ColumnName="status" />
+                <ScalarProperty Name="PaymentStatus" ColumnName="payment_status" />
+                <ScalarProperty Name="DishId" ColumnName="dish_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Reservations">
+            <EntityTypeMapping TypeName="RestaurantDataModel.Reservation">
+              <MappingFragment StoreEntitySet="Reservations">
+                <ScalarProperty Name="ReservationId" ColumnName="reservation_id" />
+                <ScalarProperty Name="ClientId" ColumnName="client_id" />
+                <ScalarProperty Name="TableNumber" ColumnName="table_number" />
+                <ScalarProperty Name="ReservedAt" ColumnName="reserved_at" />
+                <ScalarProperty Name="GuestCount" ColumnName="guest_count" />
+                <ScalarProperty Name="Status" ColumnName="status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserLogs">
+            <EntityTypeMapping TypeName="RestaurantDataModel.UserLog">
+              <MappingFragment StoreEntitySet="log">
+                <ScalarProperty Name="UserId" ColumnName="user_id" />
+                <ScalarProperty Name="ClientId" ColumnName="client_id" />
+                <ScalarProperty Name="Login" ColumnName="login" />
+                <ScalarProperty Name="PasswordHash" ColumnName="password_hash" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+
+  <edmx:Designer>
+    <edmx:Connection>
+      <edmx:DesignerInfoPropertySet>
+        <edmx:DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </edmx:DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <edmx:DesignerInfoPropertySet>
+        <edmx:DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <edmx:DesignerProperty Name="EnablePluralization" Value="true" />
+        <edmx:DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <edmx:DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <edmx:DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </edmx:DesignerInfoPropertySet>
+    </edmx:Options>
+    <edmx:Diagrams >
+      <edmx:Diagram DiagramId="6d9578f205034e309cf4b65bb3dae799" Name="Diagram1">
+        <edmx:EntityTypeShape EntityType="RestaurantDataModel.Client" Width="1.5" PointX="0.75" PointY="4.375" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="RestaurantDataModel.Dish" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="RestaurantDataModel.Order" Width="1.5" PointX="3" PointY="2.375" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="RestaurantDataModel.Reservation" Width="1.5" PointX="3" PointY="6.75" IsExpanded="true" />
+        <edmx:EntityTypeShape EntityType="RestaurantDataModel.UserLog" Width="1.5" PointX="3" PointY="9.75" IsExpanded="true" />
+        <edmx:AssociationConnector Association="RestaurantDataModel.FK_log_Clients" ManuallyRouted="false" />
+        <edmx:AssociationConnector Association="RestaurantDataModel.FK_Orders_Clients" ManuallyRouted="false" />
+        <edmx:AssociationConnector Association="RestaurantDataModel.FK_Orders_Dishes" ManuallyRouted="false" />
+        <edmx:AssociationConnector Association="RestaurantDataModel.FK_Reservations_Clients" ManuallyRouted="false" />
+      </edmx:Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
